@@ -72,7 +72,10 @@ export const createProjecController = async (req, res) => {
       path.resolve("src", "uploads", req.file.filename)
     );
 
-    avatar = `http://localhost:3000/uploads/${req.file.filename}`;
+    // avatar = `http://localhost:3000/uploads/${req.file.filename}`;
+    avatar = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
   }
 
   const project = {
