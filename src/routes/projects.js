@@ -17,18 +17,9 @@ import { auth } from "../middlewares/users.js";
 export const projectRouters = express.Router();
 const jsonParser = express.json();
 
-projectRouters.get(
-  "/",
-  // auth,
-  ctrlWrapper(getProjectsController)
-);
+projectRouters.get("/", ctrlWrapper(getProjectsController));
 
-projectRouters.get(
-  "/:id",
-  // auth,
-  isValidID,
-  ctrlWrapper(getProjectController)
-);
+projectRouters.get("/:id", isValidID, ctrlWrapper(getProjectController));
 
 projectRouters.delete(
   "/:id",
