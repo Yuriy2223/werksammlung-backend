@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema(
   {
-    images: {
+    // userId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: true,
+    // },
+    imgUrl: {
       type: String,
       default: null,
     },
@@ -14,10 +18,12 @@ const projectSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
+      trim: true,
     },
     author: {
       type: String,
       required: true,
+      trim: true,
     },
     technologies: {
       type: [String],
@@ -31,9 +37,9 @@ const projectSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    year: {
-      type: Number,
-      required: true,
+    date: {
+      type: String,
+      default: null,
     },
   },
   {

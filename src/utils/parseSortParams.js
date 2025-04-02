@@ -3,7 +3,7 @@ const parseSortBy = (value) => {
     return "_id";
   }
 
-  const keys = ["_id", "name", "gender", "year", "createdAt"];
+  const keys = ["_id", "author", "technologies", "date", "title"];
 
   if (keys.includes(value) !== true) {
     return "_id";
