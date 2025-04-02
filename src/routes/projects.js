@@ -5,13 +5,14 @@ import { upload } from "../middlewares/upload.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { projectSchema, updateProjectSchema } from "../validation/projects.js";
 import {
-  createProjecController,
+  createProjectController,
   deleteProjectController,
   getProjectController,
   getProjectsController,
   replaceProjectController,
   updateProjectController,
 } from "../controllers/projects.js";
+import { auth } from "../middlewares/users.js";
 
 export const projectRouters = express.Router();
 const jsonParser = express.json();
@@ -20,18 +21,25 @@ projectRouters.get("/", ctrlWrapper(getProjectsController));
 
 projectRouters.get("/:id", isValidID, ctrlWrapper(getProjectController));
 
-projectRouters.delete("/:id", isValidID, ctrlWrapper(deleteProjectController));
+projectRouters.delete(
+  "/:id",
+  // auth,
+  isValidID,
+  ctrlWrapper(deleteProjectController)
+);
 
 projectRouters.post(
   "/",
-  upload.single("avatar"),
+  // auth,
+  upload.single("images"),
   jsonParser,
   validateBody(projectSchema),
-  ctrlWrapper(createProjecController)
+  ctrlWrapper(createProjectController)
 );
 
 projectRouters.put(
   "/:id",
+  // auth,
   isValidID,
   jsonParser,
   validateBody(projectSchema),
@@ -40,6 +48,7 @@ projectRouters.put(
 
 projectRouters.patch(
   "/:id",
+  // auth,
   isValidID,
   jsonParser,
   validateBody(updateProjectSchema),

@@ -9,6 +9,6 @@ export const app = express();
 
 app.use("/uploads", express.static(path.resolve("src", "uploads")));
 app.use(cookieParser());
-app.use(routers);
+app.use("/api", routers);
 app.use(notFoundError);
 app.use(errorServer);

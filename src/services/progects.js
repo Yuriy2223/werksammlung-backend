@@ -1,27 +1,28 @@
-import { Project } from "../models/project";
+import { Project } from "../models/project.js";
 
-export const getStudents = async ({
+export const getProjects = async ({
   page,
   perPage,
   sortBy,
   sortOrder,
   filter,
-  progectId,
 }) => {
   const skip = page > 0 ? (page - 1) * perPage : 0;
 
-  const projectQuery = Project.find({ progectId });
+  const projectQuery = Project.find();
 
   if (typeof filter.minYear !== "undefined") {
-    projectQuery.where("year").gte(filter.minYear);
+    projectQuery.where("date").gte(filter.minYear);
   }
 
   if (typeof filter.maxYear !== "undefined") {
-    projectQuery.where("year").lte(filter.maxYear);
+    projectQuery.where("date").lte(filter.maxYear);
   }
 
   const [total, projects] = await Promise.all([
-    Project.countDocuments(projectQuery),
+    Project.countDocuments({
+      ...filter,
+    }),
     projectQuery
       .sort({ [sortBy]: sortOrder })
       .skip(skip)
@@ -31,7 +32,7 @@ export const getStudents = async ({
   const totalPages = Math.ceil(total / perPage);
 
   return {
-    progects,
+    projects,
     total,
     page,
     perPage,
@@ -41,20 +42,20 @@ export const getStudents = async ({
   };
 };
 
-export function getStudent(progectId) {
-  return Project.findById(progectId); // findOne({ _id: id })
+export function getProject(projectId) {
+  return Project.findById(projectId);
 }
 
-export function deleteStudent(progectId) {
-  return Project.findByIdAndDelete(progectId); // findOneAndDelete({ _id: id })
+export function deleteProject(projectId) {
+  return Project.findByIdAndDelete(projectId);
 }
 
-export function createStudent(progect) {
-  return Project.create(progect);
+export function createProject(project) {
+  return Project.create(project);
 }
 
-export async function replaceStudent(progectId, progect) {
-  const result = await Project.findByIdAndUpdate(progectId, progect, {
+export async function replaceProject(projectId, project) {
+  const result = await Project.findByIdAndUpdate(projectId, project, {
     new: true,
     upsert: true,
     includeResultMetadata: true,
@@ -66,6 +67,6 @@ export async function replaceStudent(progectId, progect) {
   };
 }
 
-export async function updateStudent(progectId, progect) {
-  return Project.findByIdAndUpdate(progectId, progect, { new: true });
+export async function updateProject(projectId, project) {
+  return Project.findByIdAndUpdate(projectId, project, { new: true });
 }

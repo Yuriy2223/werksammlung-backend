@@ -1,19 +1,31 @@
 import * as fs from "node:fs/promises";
 import path from "path";
 import createHttpError from "http-errors";
+import { getEnvVar } from "../utils/getEnvVar.js";
+import { parsePaginationParams } from "../utils/parsePaginationParams.js";
+import { parseSortParams } from "../utils/parseSortParams.js";
+import { parseFilterParams } from "../utils/parseFilterParams.js";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
+import {
+  createProject,
+  deleteProject,
+  getProject,
+  getProjects,
+  replaceProject,
+  updateProject,
+} from "../services/progects.js";
 
 export const getProjectsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
   const filter = parseFilterParams(req.query);
 
-  const response = await getProject({
+  const response = await getProjects({
     page,
     perPage,
     sortBy,
     sortOrder,
     filter,
-    projectId: req.project.id,
   });
 
   res.json({
@@ -28,7 +40,7 @@ export const getProjectController = async (req, res) => {
 
   const project = await getProject(id);
 
-  if (student === null) {
+  if (project === null) {
     throw new createHttpError.NotFound("Project not found");
   }
 
@@ -59,37 +71,39 @@ export const deleteProjectController = async (req, res) => {
   });
 };
 
-export const createProjecController = async (req, res) => {
-  let avatar = null;
+export const createProjectController = async (req, res) => {
+  try {
+    let imgUrl = req.body.imgUrl || null;
 
-  if (getEnvVar("UPLOAD_TO_CLOUDINARY") === "true") {
-    const result = await uploadToCloudinary(req.file.path);
+    if (req.file) {
+      if (getEnvVar("UPLOAD_TO_CLOUDINARY") === "true") {
+        const result = await uploadToCloudinary(req.file.path);
+        imgUrl = result.secure_url;
+      } else {
+        const uploadPath = path.resolve("src", "uploads", req.file.filename);
+        await fs.rename(req.file.path, uploadPath);
+        imgUrl = `${req.protocol}://${req.get("host")}/uploads/${
+          req.file.filename
+        }`;
+      }
+    }
 
-    avatar = result.secure_url;
-  } else {
-    await fs.rename(
-      req.file.path,
-      path.resolve("src", "uploads", req.file.filename)
-    );
+    const project = {
+      ...req.body,
+      imgUrl,
+    };
 
-    // avatar = `http://localhost:3000/uploads/${req.file.filename}`;
-    avatar = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`;
+    const result = await createProject(project);
+
+    res.status(201).json({
+      status: 201,
+      message: "Project created successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error in createProjecController:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
-
-  const project = {
-    ...req.body,
-    projectId: req.project.id,
-    avatar,
-  };
-  const result = await createProject(project);
-
-  res.status(201).json({
-    status: 201,
-    message: "Project created successfully",
-    data: result,
-  });
 };
 
 export const replaceProjectController = async (req, res) => {
@@ -114,16 +128,34 @@ export const replaceProjectController = async (req, res) => {
 
 export const updateProjectController = async (req, res) => {
   const { id } = req.params;
-  const project = req.body;
-  const result = await updateProject(id, project);
 
-  if (result === null) {
+  const project = await getProject(id);
+
+  if (!project) {
     throw new createHttpError.NotFound("Project not found");
   }
+
+  if (req.file) {
+    let imgUrl = null;
+    if (getEnvVar("UPLOAD_TO_CLOUDINARY") === "true") {
+      const result = await uploadToCloudinary(req.file.path);
+      imgUrl = result.secure_url;
+    } else {
+      const uploadPath = path.resolve("src", "uploads", req.file.filename);
+      await fs.rename(req.file.path, uploadPath);
+      imgUrl = `${req.protocol}://${req.get("host")}/uploads/${
+        req.file.filename
+      }`;
+    }
+
+    project.imgUrl = imgUrl;
+  }
+
+  const updatedProject = await updateProject(id, project);
 
   res.json({
     status: 200,
     message: "Project updated successfully",
-    data: result,
+    data: updatedProject,
   });
 };
