@@ -1,12 +1,12 @@
 const parseSortBy = (value) => {
   if (typeof value === "undefined") {
-    return "_id";
+    return "createdAt";
   }
 
-  const keys = ["_id", "author", "technologies", "date", "title"];
+  const keys = ["_id", "author", "technologies", "date", "title", "createdAt"];
 
-  if (keys.includes(value) !== true) {
-    return "_id";
+  if (!keys.includes(value)) {
+    return "createdAt";
   }
 
   return value;
@@ -14,24 +14,17 @@ const parseSortBy = (value) => {
 
 const parseSortOrder = (value) => {
   if (typeof value === "undefined") {
-    return "asc";
+    return "desc";
   }
 
-  if (value !== "asc" && value !== "desc") {
-    return "asc";
-  }
-
-  return value;
+  return value === "desc" ? "desc" : "asc";
 };
 
 export const parseSortParams = (query) => {
   const { sortBy, sortOrder } = query;
 
-  const parsedSortBy = parseSortBy(sortBy);
-  const parsedSortOrder = parseSortOrder(sortOrder);
-
   return {
-    sortBy: parsedSortBy,
-    sortOrder: parsedSortOrder,
+    sortBy: parseSortBy(sortBy),
+    sortOrder: parseSortOrder(sortOrder),
   };
 };

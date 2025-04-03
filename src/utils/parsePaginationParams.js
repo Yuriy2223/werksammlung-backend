@@ -3,23 +3,14 @@ const parseNumber = (value, defaultValue) => {
     return defaultValue;
   }
 
-  const parsedValue = parseInt(value);
+  const parsedValue = parseInt(value, 6);
 
-  if (Number.isNaN(parsedValue) === true) {
-    return defaultValue;
-  }
-
-  return parsedValue;
+  return Number.isNaN(parsedValue) ? defaultValue : parsedValue;
 };
 
 export const parsePaginationParams = (query) => {
-  const { page, perPage } = query;
-
-  const parsedPage = parseNumber(page, 1);
-  const parsedPerPage = parseNumber(perPage, 10);
-
   return {
-    page: parsedPage,
-    perPage: parsedPerPage,
+    page: parseNumber(query.page, 1),
+    perPage: parseNumber(query.perPage, 6),
   };
 };
