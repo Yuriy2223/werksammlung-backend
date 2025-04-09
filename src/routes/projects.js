@@ -12,7 +12,7 @@ import {
   replaceProjectController,
   updateProjectController,
 } from "../controllers/projects.js";
-import { auth } from "../middlewares/users.js";
+// import { auth } from "../middlewares/users.js";
 
 export const projectRouters = express.Router();
 const jsonParser = express.json();
