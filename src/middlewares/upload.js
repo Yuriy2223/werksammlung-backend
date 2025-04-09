@@ -1,14 +1,16 @@
-import path from "node:path";
+// import path from "node:path";
 import multer from "multer";
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.resolve("src", "tmp"));
-  },
-  filename: function (req, file, cb) {
-    const uniquePrefix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniquePrefix + "-" + file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
 
-export const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Недопустимий формат файлу. Дозволені: jpg, jpeg, png, webp"));
+  }
+};
+
+export const upload = multer({ storage, fileFilter });
