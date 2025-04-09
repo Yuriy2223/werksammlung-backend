@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Project } from "../models/project.js";
+import { Project } from "../src/models/project.js";
 
 export const getProjects = async ({
   page,

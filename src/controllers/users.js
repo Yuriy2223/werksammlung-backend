@@ -4,7 +4,7 @@ import {
   refreshSession,
   registerUser,
   requestResetPassword,
-} from "../services/users.js";
+} from "../../services/users.js";
 
 export const registerController = async (req, res) => {
   const user = await registerUser(req.body);
