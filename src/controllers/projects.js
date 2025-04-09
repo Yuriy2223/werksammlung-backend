@@ -9,7 +9,7 @@ import {
   getProjects,
   replaceProject,
   updateProject,
-} from "../../services/projects.js";
+} from "../services/projects.js";
 
 export const getProjectsController = async (req, res) => {
   try {

@@ -51,11 +51,11 @@ userRouters.post(
   ctrlWrapper(resetPasswordController)
 );
 
-userRouters.post(
-  "/",
-  // auth,
-  upload.single("images"),
-  jsonParser,
-  validateBody(usersSchema),
-  ctrlWrapper(createProjectController)
-);
+// userRouters.post(
+//   "/",
+//   // auth,
+//   upload.single("images"),
+//   jsonParser,
+//   validateBody(usersSchema),
+//   ctrlWrapper(createProjectController)
+// );
