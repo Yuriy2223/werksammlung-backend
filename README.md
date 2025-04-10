@@ -80,6 +80,17 @@ demoUrl: "https://live-demo.com/",
 date: "01-05-2023",
 },
 
+export interface Project {
+title: string;
+role: string;
+repUrl: string;
+demoUrl: string;
+imgUrl: string;
+description: string;
+technologies: string[];
+date: string;
+}
+
 ├── server.js
 ├── .env
 ├── controller
