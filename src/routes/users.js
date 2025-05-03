@@ -8,6 +8,7 @@ import {
   resetPasswordSchema,
 } from "../validation/users.js";
 import {
+  getProfile,
   loginController,
   logoutController,
   refreshController,
@@ -59,3 +60,4 @@ userRouters.post(
 //   validateBody(usersSchema),
 //   ctrlWrapper(createProjectController)
 // );
+userRouters.get("/profile", ctrlWrapper(getProfile));
