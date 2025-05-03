@@ -32,14 +32,29 @@ uploadRouters.post(
         return res.status(404).json({ message: "Користувача не знайдено" });
       }
 
-      res
-        .status(200)
-        .json({ message: "Аватар успішно завантажено", user: updatedUser });
+      //       res
+      //         .status(200)
+      //         .json({ message: "Аватар успішно завантажено", user: updatedUser });
+      //     } catch (err) {
+      //       if (err instanceof multer.MulterError) {
+      //         return res.status(400).json({ message: err.message });
+      //       }
+
+      //       next(err);
+      //     }
+      //   }
+      // );
+      res.status(200).json({
+        message: "Аватар успішно завантажено",
+        user: {
+          ...updatedUser.toObject(),
+          avatarUrl: `/api/avatar/${updatedUser._id}`,
+        },
+      });
     } catch (err) {
       if (err instanceof multer.MulterError) {
         return res.status(400).json({ message: err.message });
       }
-
       next(err);
     }
   }
