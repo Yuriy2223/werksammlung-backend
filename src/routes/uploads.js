@@ -1,13 +1,13 @@
 import express from "express";
 import multer from "multer";
-import { upload } from "../middlewares/upload.js";
+import { uploadAvatar, uploadCV } from "../middlewares/upload.js";
 import { User } from "../models/user.js";
 
-export const uploadRouters = express.Router();
+export const uploadRouter = express.Router();
 
-uploadRouters.post(
+uploadRouter.post(
   "/avatar/:userId",
-  upload.single("avatar"),
+  uploadAvatar.single("avatar"),
   async (req, res, next) => {
     try {
       const { userId } = req.params;
@@ -19,7 +19,7 @@ uploadRouters.post(
       const updatedUser = await User.findByIdAndUpdate(
         sanitizedUserId,
         {
-          avatar: {
+          avatarUrl: {
             data: req.file.buffer,
             contentType: req.file.mimetype,
             filename: req.file.originalname,
@@ -32,23 +32,11 @@ uploadRouters.post(
         return res.status(404).json({ message: "Користувача не знайдено" });
       }
 
-      //       res
-      //         .status(200)
-      //         .json({ message: "Аватар успішно завантажено", user: updatedUser });
-      //     } catch (err) {
-      //       if (err instanceof multer.MulterError) {
-      //         return res.status(400).json({ message: err.message });
-      //       }
-
-      //       next(err);
-      //     }
-      //   }
-      // );
       res.status(200).json({
         message: "Аватар успішно завантажено",
         user: {
           ...updatedUser.toObject(),
-          avatarUrl: `/api/avatar/${updatedUser._id}`,
+          avatarUrl: `/api/uploads/avatar/${updatedUser._id}`,
         },
       });
     } catch (err) {
@@ -60,18 +48,76 @@ uploadRouters.post(
   }
 );
 
-uploadRouters.get("/avatar/:userId", async (req, res, next) => {
+uploadRouter.get("/avatar/:userId", async (req, res, next) => {
   try {
     const { userId } = req.params;
+    const user = await User.findById(userId.trim());
 
-    const user = await User.findById(userId);
-
-    if (!user || !user.avatar || !user.avatar.data) {
+    if (!user || !user.avatarUrl || !user.avatarUrl.data) {
       return res.status(404).json({ message: "Аватар не знайдено" });
     }
 
-    res.set("Content-Type", user.avatar.contentType);
-    res.send(user.avatar.data);
+    res.set("Content-Type", user.avatarUrl.contentType);
+    res.send(user.avatarUrl.data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+uploadRouter.post(
+  "/cv/:userId",
+  uploadCV.single("cv"),
+  async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      if (!req.file) {
+        return res.status(400).json({ message: "PDF-файл не надано" });
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId.trim(),
+        {
+          viewCV: {
+            data: req.file.buffer,
+            contentType: req.file.mimetype,
+            filename: req.file.originalname,
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "Користувача не знайдено" });
+      }
+
+      res.status(200).json({
+        message: "CV успішно завантажено",
+        user: updatedUser.toJSON(),
+      });
+    } catch (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({ message: err.message });
+      }
+      next(err);
+    }
+  }
+);
+
+uploadRouter.get("/cv/:userId", async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId.trim());
+
+    if (!user || !user.viewCV?.data) {
+      return res.status(404).json({ message: "CV не знайдено" });
+    }
+
+    res.set("Content-Type", user.viewCV.contentType);
+    res.set(
+      "Content-Disposition",
+      `inline; filename="${user.viewCV.filename}"`
+    );
+    res.send(user.viewCV.data);
   } catch (err) {
     next(err);
   }

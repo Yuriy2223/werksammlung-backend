@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-// import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import { routers } from "./routes/index.js";
 import { notFoundError } from "./middlewares/notFoundError.js";
