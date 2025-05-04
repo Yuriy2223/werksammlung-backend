@@ -9,7 +9,7 @@ const localizedStringSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const avatarSchema = new mongoose.Schema(
+const uploadSchema = new mongoose.Schema(
   {
     data: Buffer,
     contentType: String,
@@ -44,9 +44,9 @@ const userSchema = new mongoose.Schema(
     gitHub: String,
     linkedin: String,
     telegram: String,
-    viewCV: String,
     technologies: [String],
-    avatarUrl: avatarSchema,
+    avatarUrl: uploadSchema,
+    viewCV: uploadSchema,
   },
   {
     versionKey: false,
@@ -62,6 +62,10 @@ userSchema.methods.toJSON = function () {
     obj.avatarUrl = `data:${
       obj.avatarUrl.contentType
     };base64,${obj.avatarUrl.data.toString("base64")}`;
+  }
+
+  if (obj.viewCV) {
+    obj.viewCV = `/api/uploads/cv/${obj._id}`;
   }
 
   return obj;

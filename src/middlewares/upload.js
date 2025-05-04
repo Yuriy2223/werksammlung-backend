@@ -1,16 +1,31 @@
-// import path from "node:path";
 import multer from "multer";
 
 const storage = multer.memoryStorage();
 
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+const createUploader = (type) => {
+  const fileFilter = (req, file, cb) => {
+    const imageTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    const pdfType = "application/pdf";
 
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Недопустимий формат файлу. Дозволені: jpg, jpeg, png, webp"));
-  }
+    if (type === "image" && imageTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else if (type === "pdf" && file.mimetype === pdfType) {
+      cb(null, true);
+    } else {
+      const message =
+        type === "image"
+          ? "Недопустимий формат файлу. Дозволені: jpg, jpeg, png, webp"
+          : "Лише PDF-файли дозволені";
+      cb(new Error(message), false);
+    }
+  };
+
+  return multer({
+    storage,
+    fileFilter,
+    limits: type === "pdf" ? { fileSize: 5 * 1024 * 1024 } : undefined,
+  });
 };
 
-export const upload = multer({ storage, fileFilter });
+export const uploadAvatar = createUploader("image");
+export const uploadCV = createUploader("pdf");
