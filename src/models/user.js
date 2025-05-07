@@ -18,6 +18,22 @@ const uploadSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const skillItemSchema = new mongoose.Schema(
+  {
+    name: { type: localizedStringSchema, required: true },
+    link: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+const skillCategorySchema = new mongoose.Schema(
+  {
+    category: { type: localizedStringSchema, required: true },
+    items: { type: [skillItemSchema], required: true },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -44,9 +60,10 @@ const userSchema = new mongoose.Schema(
     gitHub: String,
     linkedin: String,
     telegram: String,
-    technologies: [String],
+    // technologies: [String],
     avatarUrl: uploadSchema,
     viewCV: uploadSchema,
+    skills: [skillCategorySchema],
   },
   {
     versionKey: false,
