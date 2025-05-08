@@ -1,4 +1,12 @@
 import mongoose from "mongoose";
+const localizedStringSchema = new mongoose.Schema(
+  {
+    en: { type: String, required: true },
+    de: { type: String, required: true },
+    ua: { type: String, required: true },
+  },
+  { _id: false }
+);
 
 const projectSchema = new mongoose.Schema(
   {
@@ -7,17 +15,7 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
     title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    author: {
-      type: String,
+      type: localizedStringSchema,
       required: true,
       trim: true,
     },
@@ -25,17 +23,32 @@ const projectSchema = new mongoose.Schema(
       type: [String],
       required: true,
     },
-    repositoryUrl: {
+    description: {
+      type: localizedStringSchema,
+      required: true,
+      trim: true,
+    },
+    role: {
+      type: localizedStringSchema,
+      required: true,
+      trim: true,
+    },
+    codeUrl: {
       type: String,
       default: null,
     },
-    liveDemoUrl: {
+    webUrl: {
       type: String,
       default: null,
     },
     date: {
       type: String,
       default: null,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {

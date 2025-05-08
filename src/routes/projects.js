@@ -28,14 +28,14 @@ projectRouters.delete(
   ctrlWrapper(deleteProjectController)
 );
 
-// projectRouters.post(
-//   "/",
-//   // auth,
-//   upload.single("images"),
-//   jsonParser,
-//   validateBody(projectSchema),
-//   ctrlWrapper(createProjectController)
-// );
+projectRouters.post(
+  "/",
+  // auth,
+  // upload.single("images"),
+  jsonParser,
+  validateBody(projectSchema),
+  ctrlWrapper(createProjectController)
+);
 
 projectRouters.put(
   "/:id",

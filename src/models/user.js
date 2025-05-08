@@ -60,10 +60,10 @@ const userSchema = new mongoose.Schema(
     gitHub: String,
     linkedin: String,
     telegram: String,
-    // technologies: [String],
     avatarUrl: uploadSchema,
     viewCV: uploadSchema,
     skills: [skillCategorySchema],
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
   },
   {
     versionKey: false,
