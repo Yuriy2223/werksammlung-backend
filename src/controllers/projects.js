@@ -2,6 +2,7 @@ import createHttpError from "http-errors";
 import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
+import { User } from "../models/user.js";
 import {
   createProject,
   deleteProject,
@@ -48,9 +49,13 @@ export const getProjectController = async (req, res) => {
     console.error("Error fetching project:", error);
   }
 };
+
 export const createProjectController = async (req, res) => {
   try {
     const result = await createProject(req.body);
+    await User.findByIdAndUpdate(req.body.userId, {
+      $push: { projects: result._id },
+    });
 
     res.status(201).json({
       status: 201,
@@ -61,6 +66,7 @@ export const createProjectController = async (req, res) => {
     console.error("Error creating project:", error);
   }
 };
+
 export const updateProjectController = async (req, res) => {
   try {
     const { id } = req.params;
