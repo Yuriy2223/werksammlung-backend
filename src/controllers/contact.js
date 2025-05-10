@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
-export const sendContactForm = async (req, res) => {
-  const { name, email, tel, message } = req.body;
+export const contactController = async (req, res) => {
+  const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "Missing fields" });
@@ -19,7 +19,7 @@ export const sendContactForm = async (req, res) => {
     from: email,
     to: "your.email@example.com",
     subject: "New Contact Form Message",
-    text: `From: ${name} (${email}, ${tel || "no phone"})\n\n${message}`,
+    text: `From: ${name} (${email})\n\n${message}`,
   };
 
   try {
