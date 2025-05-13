@@ -1,8 +1,8 @@
 import express from "express";
 import { isValidID } from "../middlewares/isValidID.js";
 import { validateBody } from "../middlewares/validateBody.js";
-// import { upload } from "../middlewares/upload.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import { uploadImage } from "../middlewares/upload.js";
 import { projectSchema, updateProjectSchema } from "../validation/projects.js";
 import {
   createProjectController,
@@ -11,6 +11,7 @@ import {
   getProjectsController,
   replaceProjectController,
   updateProjectController,
+  uploadImageController,
 } from "../controllers/projects.js";
 // import { auth } from "../middlewares/users.js";
 
@@ -28,13 +29,22 @@ projectRouters.delete(
   ctrlWrapper(deleteProjectController)
 );
 
+// завантаження картинки разом з проєктом
 projectRouters.post(
   "/",
   // auth,
   // upload.single("images"),
+  // uploadImage.single("image"),
   jsonParser,
   validateBody(projectSchema),
   ctrlWrapper(createProjectController)
+);
+
+// завантаження картинки окремо
+projectRouters.patch(
+  "/:id/upload/image",
+  uploadImage.single("image"),
+  uploadImageController
 );
 
 projectRouters.put(

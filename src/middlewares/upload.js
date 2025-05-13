@@ -29,3 +29,4 @@ const createUploader = (type) => {
 
 export const uploadAvatar = createUploader("image");
 export const uploadCV = createUploader("pdf");
+export const uploadImage = createUploader("image");
