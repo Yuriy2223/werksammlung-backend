@@ -9,6 +9,8 @@ cloudinary.v2.config({
   api_secret: getEnvVar("CLOUDINARY_API_SECRET"),
 });
 
-export const uploadToCloudinary = (filePath) => {
-  return cloudinary.v2.uploader.upload(filePath);
+export const uploadCloudinary = (filePath) => {
+  return cloudinary.v2.uploader.upload(filePath, {
+    folder: "portfolio",
+  });
 };

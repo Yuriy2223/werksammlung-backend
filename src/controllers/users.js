@@ -1,3 +1,4 @@
+import { User } from "../models/user.js";
 import {
   loginUser,
   logoutUser,
@@ -5,7 +6,6 @@ import {
   registerUser,
   requestResetPassword,
 } from "../services/users.js";
-import { User } from "../models/user.js";
 
 export const registerController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -87,18 +87,9 @@ export const resetPasswordController = async (req, res) => {
   res.send("Reset password");
 };
 
-// export const getProfile = async (req, res) => {
-//   const user = await User.findOne();
-
-//   if (!user) {
-//     return res.status(404).json({ message: "User not found" });
-//   }
-
-//   res.status(200).json(user);
-// };
-
 export const getProfile = async (req, res) => {
   try {
+    //   const user = await User.findOne();
     const user = await User.findOne().populate("projects");
 
     if (!user) {

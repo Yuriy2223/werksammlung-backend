@@ -9,7 +9,8 @@ const localizedStringSchema = Joi.object({
 });
 
 export const projectSchema = Joi.object({
-  imgUrl: Joi.string().uri().allow(null),
+  // imgUrl: Joi.string().uri().allow(null),
+  imgUrl: Joi.string().uri().required(),
   title: localizedStringSchema.required(),
   description: localizedStringSchema.required(),
   role: localizedStringSchema.required(),
@@ -24,7 +25,8 @@ export const projectSchema = Joi.object({
 });
 
 export const updateProjectSchema = Joi.object({
-  imgUrl: Joi.string().uri().allow(null),
+  // imgUrl: Joi.string().uri().allow(null),
+  imgUrl: Joi.string().uri().optional(),
   title: localizedStringSchema.optional(),
   description: localizedStringSchema.optional(),
   role: localizedStringSchema.optional(),
