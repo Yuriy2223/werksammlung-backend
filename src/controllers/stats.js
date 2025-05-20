@@ -4,7 +4,15 @@ import { getCountryFromIP } from "../utils/geo.js";
 export const createStat = async (req, res) => {
   try {
     const { timeSpent } = req.body;
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    // const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const ip = (
+      req.headers["x-forwarded-for"] ||
+      req.socket.remoteAddress ||
+      ""
+    )
+      .split(",")[0]
+      .trim();
+
     const country = await getCountryFromIP(ip);
 
     const newStat = new Stat({ ip, country, timeSpent });
