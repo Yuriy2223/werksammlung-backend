@@ -19,9 +19,7 @@ export const projectRouters = express.Router();
 const jsonParser = express.json();
 
 projectRouters.get("/", ctrlWrapper(getProjectsController));
-
 projectRouters.get("/:id", isValidID, ctrlWrapper(getProjectController));
-
 projectRouters.delete(
   "/:id",
   // auth,
@@ -40,7 +38,6 @@ projectRouters.post(
   ctrlWrapper(createProjectController)
 );
 
-// завантаження картинки окремо
 projectRouters.patch(
   "/:id/upload/image",
   uploadImage.single("image"),

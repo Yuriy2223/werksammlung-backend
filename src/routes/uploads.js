@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import { uploadAvatar, uploadCV } from "../middlewares/upload.js";
-import { User } from "../models/user.js";
+import { Profile } from "../models/profile.js";
 
 export const uploadRouter = express.Router();
 
@@ -16,7 +16,7 @@ uploadRouter.post(
         return res.status(400).json({ message: "Файл не надано" });
       }
 
-      const updatedUser = await User.findByIdAndUpdate(
+      const updatedUser = await Profile.findByIdAndUpdate(
         sanitizedUserId,
         {
           avatarUrl: {
@@ -51,7 +51,7 @@ uploadRouter.post(
 uploadRouter.get("/avatar/:userId", async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId.trim());
+    const user = await Profile.findById(userId.trim());
 
     if (!user || !user.avatarUrl || !user.avatarUrl.data) {
       return res.status(404).json({ message: "Аватар не знайдено" });
@@ -74,7 +74,7 @@ uploadRouter.post(
         return res.status(400).json({ message: "PDF-файл не надано" });
       }
 
-      const updatedUser = await User.findByIdAndUpdate(
+      const updatedUser = await Profile.findByIdAndUpdate(
         userId.trim(),
         {
           viewCV: {
@@ -106,7 +106,7 @@ uploadRouter.post(
 uploadRouter.get("/cv/:userId", async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId.trim());
+    const user = await Profile.findById(userId.trim());
 
     if (!user || !user.viewCV?.data) {
       return res.status(404).json({ message: "CV не знайдено" });

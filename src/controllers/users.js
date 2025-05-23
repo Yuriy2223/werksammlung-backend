@@ -1,4 +1,3 @@
-import { User } from "../models/user.js";
 import {
   loginUser,
   logoutUser,
@@ -87,17 +86,10 @@ export const resetPasswordController = async (req, res) => {
   res.send("Reset password");
 };
 
-export const getProfile = async (req, res) => {
-  try {
-    //   const user = await User.findOne();
-    const user = await User.findOne().populate("projects");
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
+export const currentUserController = async (req, res) => {
+  res.json({
+    status: 200,
+    message: "Current user fetched successfully",
+    data: req.user,
+  });
 };
