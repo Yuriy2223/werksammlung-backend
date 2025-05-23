@@ -2,7 +2,8 @@ import createHttpError from "http-errors";
 import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
-import { User } from "../models/user.js";
+import { uploadCloudinary } from "../utils/uploadCloudinary.js";
+import { Project } from "../models/project.js";
 import {
   createProject,
   deleteProject,
@@ -11,8 +12,6 @@ import {
   replaceProject,
   updateProject,
 } from "../services/projects.js";
-import { uploadCloudinary } from "../utils/uploadCloudinary.js";
-import { Project } from "../models/project.js";
 
 export const getProjectsController = async (req, res) => {
   try {

@@ -8,43 +8,39 @@ import {
   resetPasswordSchema,
 } from "../validation/users.js";
 import {
-  getProfile,
   loginController,
   logoutController,
   refreshController,
   registerController,
   requestPasswordResetController,
   resetPasswordController,
+  currentUserController,
 } from "../controllers/users.js";
 
 export const userRouters = express.Router();
 const jsonParser = express.json();
 
 userRouters.post(
-  "/register",
+  "/signup",
   jsonParser,
   validateBody(registerSchema),
   ctrlWrapper(registerController)
 );
-
 userRouters.post(
-  "/login",
+  "/signin",
   jsonParser,
   validateBody(loginSchema),
   ctrlWrapper(loginController)
 );
-
-userRouters.post("/logout", ctrlWrapper(logoutController));
-
+userRouters.get("/current", auth, ctrlWrapper(currentUserController));
+userRouters.post("/signout", ctrlWrapper(logoutController));
 userRouters.post("/refresh", ctrlWrapper(refreshController));
-
 userRouters.post(
   "/request-password-reset",
   jsonParser,
   validateBody(requestPasswordResetSchema),
   ctrlWrapper(requestPasswordResetController)
 );
-
 userRouters.post(
   "/reset-password",
   jsonParser,
@@ -60,4 +56,3 @@ userRouters.post(
 //   validateBody(usersSchema),
 //   ctrlWrapper(createProjectController)
 // );
-userRouters.get("/profile", ctrlWrapper(getProfile));
