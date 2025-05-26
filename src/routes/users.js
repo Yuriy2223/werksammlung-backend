@@ -32,7 +32,7 @@ userRouters.post(
   validateBody(loginSchema),
   ctrlWrapper(loginController)
 );
-userRouters.get("/current", auth, ctrlWrapper(currentUserController));
+userRouters.get("/current", ctrlWrapper(currentUserController));
 userRouters.post("/signout", ctrlWrapper(logoutController));
 userRouters.post("/refresh", ctrlWrapper(refreshController));
 userRouters.post(

@@ -51,7 +51,7 @@ export const getStats = async (req, res) => {
     countries[country] = (countries[country] || 0) + 1;
   });
 
-  res.json({
+  res.status(200).json({
     totalVisits,
     totalTime,
     countries,
