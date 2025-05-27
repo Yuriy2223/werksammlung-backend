@@ -19,22 +19,22 @@ export const loginController = async (req, res) => {
   res.cookie("sessionId", session._id, {
     httpOnly: true,
     expires: new Date(session.refreshTokenValidUntil),
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    secure: true,
   });
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,
     expires: new Date(session.refreshTokenValidUntil),
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    secure: true,
   });
 
   res.cookie("accessToken", session.accessToken, {
     httpOnly: true,
     expires: new Date(session.accessTokenValidUntil),
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    secure: true,
   });
 
   res.status(200).json({
@@ -43,6 +43,38 @@ export const loginController = async (req, res) => {
     data: {
       accessToken: session.accessToken,
     },
+  });
+};
+
+export const refreshController = async (req, res) => {
+  const { sessionId, refreshToken } = req.cookies;
+
+  const session = await refreshSession(sessionId, refreshToken);
+
+  res.cookie("sessionId", session._id, {
+    httpOnly: true,
+    expires: new Date(session.refreshTokenValidUntil),
+    sameSite: "none",
+    secure: true,
+  });
+
+  res.cookie("refreshToken", session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(session.refreshTokenValidUntil),
+    sameSite: "none",
+    secure: true,
+  });
+
+  res.cookie("accessToken", session.accessToken, {
+    httpOnly: true,
+    expires: new Date(session.accessTokenValidUntil),
+    sameSite: "none",
+    secure: true,
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: "Session refreshed",
   });
 };
 
@@ -55,55 +87,23 @@ export const logoutController = async (req, res) => {
 
   res.clearCookie("sessionId", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    secure: true,
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    secure: true,
   });
 
   res.clearCookie("accessToken", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    secure: true,
   });
 
   res.status(204).end();
-};
-
-export const refreshController = async (req, res) => {
-  const { sessionId, refreshToken } = req.cookies;
-
-  const session = await refreshSession(sessionId, refreshToken);
-
-  res.cookie("sessionId", session._id, {
-    httpOnly: true,
-    expires: new Date(session.refreshTokenValidUntil),
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  res.cookie("refreshToken", session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(session.refreshTokenValidUntil),
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  res.cookie("accessToken", session.accessToken, {
-    httpOnly: true,
-    expires: new Date(session.accessTokenValidUntil),
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  res.status(200).json({
-    status: 200,
-    message: "Session refreshed",
-  });
 };
 
 export const requestPasswordResetController = async (req, res) => {
@@ -129,3 +129,96 @@ export const currentUserController = async (req, res) => {
     data: req.user,
   });
 };
+
+// export const loginController = async (req, res) => {
+//   const session = await loginUser(req.body.email, req.body.password);
+
+//   res.cookie("sessionId", session._id, {
+//     httpOnly: true,
+//     expires: new Date(session.refreshTokenValidUntil),
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.cookie("refreshToken", session.refreshToken, {
+//     httpOnly: true,
+//     expires: new Date(session.refreshTokenValidUntil),
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.cookie("accessToken", session.accessToken, {
+//     httpOnly: true,
+//     expires: new Date(session.accessTokenValidUntil),
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.status(200).json({
+//     status: 200,
+//     message: "User successfully logged",
+//     data: {
+//       accessToken: session.accessToken,
+//     },
+//   });
+// };
+
+// export const logoutController = async (req, res) => {
+//   const { sessionId, refreshToken } = req.cookies;
+
+//   if (typeof sessionId === "string" && typeof refreshToken === "string") {
+//     await logoutUser(sessionId, refreshToken);
+//   }
+
+//   res.clearCookie("sessionId", {
+//     httpOnly: true,
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.clearCookie("refreshToken", {
+//     httpOnly: true,
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.clearCookie("accessToken", {
+//     httpOnly: true,
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.status(204).end();
+// };
+
+// export const refreshController = async (req, res) => {
+//   const { sessionId, refreshToken } = req.cookies;
+
+//   const session = await refreshSession(sessionId, refreshToken);
+
+//   res.cookie("sessionId", session._id, {
+//     httpOnly: true,
+//     expires: new Date(session.refreshTokenValidUntil),
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.cookie("refreshToken", session.refreshToken, {
+//     httpOnly: true,
+//     expires: new Date(session.refreshTokenValidUntil),
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.cookie("accessToken", session.accessToken, {
+//     httpOnly: true,
+//     expires: new Date(session.accessTokenValidUntil),
+//     sameSite: "lax",
+//     secure: process.env.NODE_ENV === "production",
+//   });
+
+//   res.status(200).json({
+//     status: 200,
+//     message: "Session refreshed",
+//   });
+// };
