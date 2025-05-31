@@ -4,6 +4,7 @@ import { parseSortParams } from "../utils/parseSortParams.js";
 import { parseFilterParams } from "../utils/parseFilterParams.js";
 import { uploadCloudinary } from "../utils/uploadCloudinary.js";
 import { Project } from "../models/project.js";
+import { Profile } from "../models/profile.js";
 import {
   createProject,
   deleteProject,
@@ -14,58 +15,52 @@ import {
 } from "../services/projects.js";
 
 export const getProjectsController = async (req, res) => {
-  try {
-    const pagination = parsePaginationParams(req.query);
-    const sorting = parseSortParams(req.query);
-    const filter = parseFilterParams(req.query);
-    const response = await getProjects({
-      ...pagination,
-      ...sorting,
-      filter,
-    });
+  const pagination = parsePaginationParams(req.query);
+  const sorting = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
+  const response = await getProjects({
+    ...pagination,
+    ...sorting,
+    filter,
+  });
 
-    res.json({
-      status: 200,
-      message: "Projects fetched successfully",
-      data: response,
-    });
-  } catch (error) {
-    console.error("Error fetching projects:", error);
-  }
+  res.json({
+    status: 200,
+    message: "Projects fetched successfully",
+    data: response,
+  });
 };
 export const getProjectController = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const project = await getProject(id);
-    if (!project) {
-      throw new createHttpError.NotFound("Project not found");
-    }
-
-    res.json({
-      status: 200,
-      message: "Project fetched successfully",
-      data: project,
-    });
-  } catch (error) {
-    console.error("Error fetching project:", error);
+  const { id } = req.params;
+  const project = await getProject(id);
+  if (!project) {
+    throw new createHttpError.NotFound("Project not found");
   }
+
+  res.json({
+    status: 200,
+    message: "Project fetched successfully",
+    data: project,
+  });
 };
 
 export const createProjectController = async (req, res) => {
-  try {
-    const result = await createProject(req.body);
-    await User.findByIdAndUpdate(req.body.userId, {
-      $push: { projects: result._id },
-    });
+  const project = await createProject(req.body);
+  const updatedProfile = await Profile.findByIdAndUpdate(
+    req.body.profileId,
+    { $push: { projects: project._id } },
+    { new: true }
+  );
 
-    res.status(201).json({
-      status: 201,
-      message: "Project created successfully",
-      data: result,
-    });
-  } catch (error) {
-    console.error("Error creating project:", error);
+  if (!updatedProfile) {
+    return res.status(404).json({ message: "Profile not found" });
   }
+
+  res.status(201).json({
+    status: 201,
+    message: "Project created successfully",
+    data: project,
+  });
 };
 
 // // якщо через фром дату все разом
@@ -107,23 +102,19 @@ export const createProjectController = async (req, res) => {
 // };
 
 export const updateProjectController = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const project = await getProject(id);
-    if (!project) {
-      throw new createHttpError.NotFound("Project not found");
-    }
-
-    const updatedProject = await updateProject(id, req.body);
-
-    res.json({
-      status: 200,
-      message: "Project updated successfully",
-      data: updatedProject,
-    });
-  } catch (error) {
-    console.error("Error updating project:", error);
+  const { id } = req.params;
+  const project = await getProject(id);
+  if (!project) {
+    throw new createHttpError.NotFound("Project not found");
   }
+
+  const updatedProject = await updateProject(id, req.body);
+
+  res.json({
+    status: 200,
+    message: "Project updated successfully",
+    data: updatedProject,
+  });
 };
 
 // // якщо через фром дату все разом
@@ -163,72 +154,60 @@ export const updateProjectController = async (req, res) => {
 // };
 
 export const deleteProjectController = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await deleteProject(id);
+  const { id } = req.params;
+  const result = await deleteProject(id);
 
-    if (result === null) {
-      throw new createHttpError.NotFound("Project not found");
-    }
-
-    res.json({
-      status: 200,
-      message: "Project deleted successfully",
-      data: result,
-    });
-  } catch (error) {
-    console.error("Error deleting project:", error);
+  if (result === null) {
+    throw new createHttpError.NotFound("Project not found");
   }
+
+  res.json({
+    status: 200,
+    message: "Project deleted successfully",
+    data: result,
+  });
 };
 export const replaceProjectController = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const project = req.body;
-    const result = await replaceProject(id, project);
+  const { id } = req.params;
+  const project = req.body;
+  const result = await replaceProject(id, project);
 
-    res.status(result.updatedExisting ? 200 : 201).json({
-      status: result.updatedExisting ? 200 : 201,
-      message: result.updatedExisting
-        ? "Project updated successfully"
-        : "Project created successfully",
-      data: result.value,
-    });
-  } catch (error) {
-    console.error("Error replacing project:", error);
-  }
+  res.status(result.updatedExisting ? 200 : 201).json({
+    status: result.updatedExisting ? 200 : 201,
+    message: result.updatedExisting
+      ? "Project updated successfully"
+      : "Project created successfully",
+    data: result.value,
+  });
 };
 
 // // якщо окремо завантажувати картинку в проєкт
 export const uploadImageController = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    if (!req.file) {
-      throw new createHttpError.BadRequest("Image file is required");
-    }
-
-    const base64Str = req.file.buffer.toString("base64");
-    const mimeType = req.file.mimetype;
-    const dataUri = `data:${mimeType};base64,${base64Str}`;
-    const uploadResult = await uploadCloudinary(dataUri);
-    const imgUrl = uploadResult.secure_url;
-
-    const updatedProject = await Project.findByIdAndUpdate(
-      id,
-      { imgUrl },
-      { new: true }
-    );
-
-    if (!updatedProject) {
-      throw new createHttpError.NotFound("Project not found");
-    }
-
-    res.json({
-      status: 200,
-      message: "Project image updated successfully",
-      data: updatedProject,
-    });
-  } catch (error) {
-    next(error);
+  if (!req.file) {
+    throw new createHttpError.BadRequest("Image file is required");
   }
+
+  const base64Str = req.file.buffer.toString("base64");
+  const mimeType = req.file.mimetype;
+  const dataUri = `data:${mimeType};base64,${base64Str}`;
+  const uploadResult = await uploadCloudinary(dataUri);
+  const imgUrl = uploadResult.secure_url;
+
+  const updatedProject = await Project.findByIdAndUpdate(
+    id,
+    { imgUrl },
+    { new: true }
+  );
+
+  if (!updatedProject) {
+    throw new createHttpError.NotFound("Project not found");
+  }
+
+  res.json({
+    status: 200,
+    message: "Project image updated successfully",
+    data: updatedProject,
+  });
 };
