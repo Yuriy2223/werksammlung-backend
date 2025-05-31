@@ -9,7 +9,6 @@ const localizedStringSchema = Joi.object({
 });
 
 export const projectSchema = Joi.object({
-  // imgUrl: Joi.string().uri().allow(null),
   imgUrl: Joi.string().uri().required(),
   title: localizedStringSchema.required(),
   description: localizedStringSchema.required(),
@@ -21,11 +20,10 @@ export const projectSchema = Joi.object({
     .pattern(dateRegex)
     .message('"date" must be in format DD-MM-YYYY')
     .required(),
-  userId: Joi.string().length(24).required(),
+  profileId: Joi.string().length(24).required(),
 });
 
 export const updateProjectSchema = Joi.object({
-  // imgUrl: Joi.string().uri().allow(null),
   imgUrl: Joi.string().uri().optional(),
   title: localizedStringSchema.optional(),
   description: localizedStringSchema.optional(),
@@ -37,5 +35,5 @@ export const updateProjectSchema = Joi.object({
     .pattern(dateRegex)
     .message('"date" must be in format DD-MM-YYYY')
     .optional(),
-  userId: Joi.string().length(24).required(),
+  profileId: Joi.string().length(24).required(),
 });

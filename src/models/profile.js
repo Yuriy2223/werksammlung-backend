@@ -18,32 +18,12 @@ const uploadSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const skillItemSchema = new mongoose.Schema(
-  {
-    name: { type: localizedStringSchema, required: true },
-    link: { type: String, required: true },
-  },
-  { _id: false }
-);
-
-const skillCategorySchema = new mongoose.Schema(
-  {
-    category: { type: localizedStringSchema, required: true },
-    items: { type: [skillItemSchema], required: true },
-  },
-  { _id: false }
-);
-
 const profileSchema = new mongoose.Schema(
   {
     email: {
       type: String,
       required: true,
       unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
     },
     firstName: {
       type: localizedStringSchema,
@@ -60,9 +40,15 @@ const profileSchema = new mongoose.Schema(
     gitHub: String,
     linkedin: String,
     telegram: String,
-    avatarUrl: uploadSchema,
-    viewCV: uploadSchema,
-    skills: [skillCategorySchema],
+    avatarUrl: {
+      type: uploadSchema,
+      required: false,
+    },
+    viewCV: {
+      type: uploadSchema,
+      required: false,
+    },
+    skills: [{ type: mongoose.Schema.Types.ObjectId, ref: "Skill" }],
     projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
   },
   {
@@ -73,7 +59,6 @@ const profileSchema = new mongoose.Schema(
 
 profileSchema.methods.toJSON = function () {
   const obj = this.toObject();
-  delete obj.password;
 
   if (obj.avatarUrl?.data && obj.avatarUrl?.contentType) {
     obj.avatarUrl = `data:${

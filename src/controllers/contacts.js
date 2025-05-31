@@ -18,7 +18,6 @@ export const contactController = async (req, res) => {
   });
 
   const mailOptions = {
-    // from: `"${name}" <${process.env.SMTP_USER}>`,
     from: `"${name}" <${email}>`,
     to: process.env.SMTP_TO,
     subject: "Message from the portfolio form",

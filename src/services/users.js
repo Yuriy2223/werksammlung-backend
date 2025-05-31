@@ -118,7 +118,6 @@ export async function requestResetPassword(email) {
 export async function resetPassword(token, newPassword) {
   try {
     const decoded = jwt.verify(token, getEnvVar("JWT_SECRET"));
-
     const user = await User.findById(decoded.sub);
 
     if (user === null) {
