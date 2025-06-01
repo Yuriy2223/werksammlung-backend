@@ -7,5 +7,5 @@ export const statRouters = express.Router();
 const jsonParser = express.json();
 
 statRouters.get("/", authCookie, ctrlWrapper(getStats));
-statRouters.post("/", authCookie, jsonParser, ctrlWrapper(createStat));
-statRouters.patch("/:id", authCookie, jsonParser, ctrlWrapper(updateStat));
+statRouters.post("/", jsonParser, ctrlWrapper(createStat));
+statRouters.patch("/:id", jsonParser, ctrlWrapper(updateStat));
