@@ -9,7 +9,12 @@ export const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    // origin: process.env.CLIENT_URL,
+    origin: [
+      process.env.CLIENT_URL,
+      process.env.CLIENT_URL2,
+      process.env.CLIENT_URL3,
+    ],
     credentials: true,
   })
 );
