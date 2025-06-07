@@ -65,11 +65,18 @@ profileSchema.methods.toJSON = function () {
       obj.avatarUrl.contentType
     };base64,${obj.avatarUrl.data.toString("base64")}`;
   }
+  //  Повертаємо тільки URL до аватарки
+  // obj.avatarUrl = obj.avatarUrl?.data ? `/api/uploads/avatar/${obj._id}` : null;
 
-  if (obj.viewCV) {
+  if (obj.viewCV?.data) {
     obj.viewCV = `/api/uploads/cv/${obj._id}`;
+  } else {
+    obj.viewCV = null;
   }
 
+  obj.viewCV = `/api/uploads/cv/${obj._id}`;
+
+  delete obj.cvFile;
   return obj;
 };
 

@@ -3,14 +3,14 @@ import createHttpError from "http-errors";
 import { Profile } from "../models/profile.js";
 
 export const isValidProfileID = async (req, res, next) => {
-  const { id } = req.params;
+  const { profileId } = req.params;
 
-  if (!isValidObjectId(id)) {
+  if (!isValidObjectId(profileId)) {
     return next(new createHttpError.BadRequest("Invalid profile ID format"));
   }
 
   try {
-    const profile = await Profile.findById(id);
+    const profile = await Profile.findById(profileId);
     if (!profile) {
       return next(new createHttpError.NotFound("Profile not found"));
     }
