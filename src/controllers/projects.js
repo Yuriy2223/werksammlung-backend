@@ -63,8 +63,8 @@ export const createProjectController = async (req, res) => {
   });
 };
 
-// // якщо через фром дату все разом
-// export const createProjectController = async (req, res, next) => {
+// якщо через фром дату все разом
+// export const createProjectControllers = async (req, res, next) => {
 //   try {
 //     let imgUrl = null;
 
@@ -117,8 +117,8 @@ export const updateProjectController = async (req, res) => {
   });
 };
 
-// // якщо через фром дату все разом
-// export const updateProjectController = async (req, res, next) => {
+// якщо через фром дату все разом
+// export const updateProjectControllers = async (req, res, next) => {
 //   try {
 //     const { id } = req.params;
 
@@ -181,7 +181,7 @@ export const replaceProjectController = async (req, res) => {
   });
 };
 
-// // якщо окремо завантажувати картинку в проєкт
+// якщо окремо завантажувати картинку в проєкт
 export const uploadImageController = async (req, res, next) => {
   const { id } = req.params;
 

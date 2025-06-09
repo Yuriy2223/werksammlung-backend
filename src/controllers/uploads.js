@@ -19,25 +19,6 @@ export const uploadAvatarController = async (req, res) => {
     },
   });
 };
-//  Повертаємо тільки URL до аватарки
-// export const uploadAvatarController = async (req, res) => {
-//   if (!req.file) {
-//     return res.status(400).json({ message: "No file provided" });
-//   }
-
-//   req.profile.avatarUrl = {
-//     data: req.file.buffer,
-//     contentType: req.file.mimetype,
-//     filename: req.file.originalname,
-//   };
-
-//   await req.profile.save();
-
-//   res.status(200).json({
-//     message: "Avatar uploaded successfully",
-//     user: req.profile.toJSON(),
-//   });
-// };
 
 export const getAvatarController = async (req, res) => {
   const { avatarUrl } = req.profile;
@@ -49,18 +30,6 @@ export const getAvatarController = async (req, res) => {
   res.set("Content-Type", avatarUrl.contentType);
   res.send(avatarUrl.data);
 };
-//  Повертаємо тільки URL до аватарки
-// export const getAvatarController = async (req, res) => {
-//   const { avatarUrl } = req.profile;
-
-//   if (!avatarUrl || !avatarUrl.data) {
-//     return res.status(404).json({ message: "Avatar not found" });
-//   }
-
-//   res.set("Content-Type", avatarUrl.contentType);
-//   res.set("Content-Disposition", `inline; filename="${avatarUrl.filename}"`);
-//   res.send(avatarUrl.data);
-// };
 
 export const uploadCVController = async (req, res) => {
   if (!req.file) {
